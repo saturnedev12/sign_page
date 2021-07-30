@@ -44,12 +44,10 @@ $('document').ready(function(){
             ctx.moveTo(x,y);
             start = true;
         } else {
-        //size of brush
+        //taille du pinceau
         let brush = 2;
-        //let brush = document.getElementById('brush').value;
-        //let color = document.getElementById('color_hexa').value;
         ctx.lineTo(x,y);
-        ctx.strokeStyle = "#222222";
+        ctx.strokeStyle = "#222222";//couleur noire par défaut
         ctx.lineWidth = brush;
         ctx.stroke();
         }
@@ -67,11 +65,30 @@ $('document').ready(function(){
     $('#new').click(function(){
         ctx.clearRect(0, 0, canvas.width, canvas.height);
     })
-
-    let link = document.getElementById('save');
-    link.addEventListener('click', function(ev) {
-        link.href = canvas.toDataURL();
+    //button pour tester la recuperation de l'image a partir du canvas
+    var link = document.getElementById('save');
+    link.addEventListener('click', async function(ev) {
+        //condition de verification avant de creer l'image
+        if(isCanvasBlank(canvas)){
+            alert('vide')
+        }else{
+            alert('rempli');
+            link.href = await canvas.toDataURL();
         link.download = "mypainting.png";
+        }
+        
     }, false);
-    
 })
+
+
+
+// function qui verifi que le canvas est vide
+function isCanvasBlank(canvas) {
+    const context = canvas.getContext('2d');
+  
+    const pixelBuffer = new Uint32Array(
+      context.getImageData(0, 0, canvas.width, canvas.height).data.buffer
+    );
+  
+    return !pixelBuffer.some(color => color !== 0);
+  }
